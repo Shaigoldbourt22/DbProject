@@ -1,5 +1,6 @@
 from queries_db_script import query_1, query_2, query_3, query_4, query_5
 
+
 def main():
     print("Executing Query 1: Search for Movies by Title")
     query_1()
@@ -20,6 +21,7 @@ def main():
     print("Executing Query 5: Find Actors Who Have Acted in More Than One Movie")
     query_5()
     print("\n")
+
 
 if __name__ == "__main__":
     main()

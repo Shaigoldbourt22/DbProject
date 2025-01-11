@@ -1,11 +1,21 @@
+from dotenv import load_dotenv
 import mysql.connector
+import os
+
+load_dotenv()
+
+db_password = os.getenv("DB_PASSWORD")
+db_host = os.getenv("DB_HOST")
+db_name = os.getenv("DB_NAME")
+db_user = os.getenv("DB_USER")
+
 
 def query_1():
     connection = mysql.connector.connect(
-        host="localhost",
-        user="your_username",
-        password="your_password",
-        database="MovieDB"
+        host=db_host,
+        user=db_user,
+        password=db_password,
+        database=db_name
     )
     cursor = connection.cursor()
     title = input("Enter movie title to search: ")
@@ -16,12 +26,13 @@ def query_1():
     cursor.close()
     connection.close()
 
+
 def query_2():
     connection = mysql.connector.connect(
-        host="localhost",
-        user="your_username",
-        password="your_password",
-        database="MovieDB"
+        host=db_host,
+        user=db_user,
+        password=db_password,
+        database=db_name
     )
     cursor = connection.cursor()
     name = input("Enter actor name to search: ")
@@ -32,12 +43,13 @@ def query_2():
     cursor.close()
     connection.close()
 
+
 def query_3():
     connection = mysql.connector.connect(
-        host="localhost",
-        user="your_username",
-        password="your_password",
-        database="MovieDB"
+        host=db_host,
+        user=db_user,
+        password=db_password,
+        database=db_name
     )
     cursor = connection.cursor()
     year = input("Enter release year: ")
@@ -55,12 +67,13 @@ def query_3():
     cursor.close()
     connection.close()
 
+
 def query_4():
     connection = mysql.connector.connect(
-        host="localhost",
-        user="your_username",
-        password="your_password",
-        database="MovieDB"
+        host=db_host,
+        user=db_user,
+        password=db_password,
+        database=db_name
     )
     cursor = connection.cursor()
     cursor.execute("""
@@ -75,21 +88,31 @@ def query_4():
     cursor.close()
     connection.close()
 
+
 def query_5():
     connection = mysql.connector.connect(
-        host="localhost",
-        user="your_username",
-        password="your_password",
-        database="MovieDB"
+        host=db_host,
+        user=db_user,
+        password=db_password,
+        database=db_name
     )
     cursor = connection.cursor()
     cursor.execute("""
-    SELECT p.name, COUNT(mc.movie_id) as movie_count
-    FROM persons p
-    JOIN movie_cast mc ON p.person_id = mc.person_id
-    GROUP BY p.name
-    HAVING movie_count > 1
-    """)
+        SELECT 
+            m.title,
+            p.name
+        FROM movies m
+        JOIN movie_cast mc_actor ON (m.movie_id = mc_actor.movie_id)
+        JOIN persons p ON mc_actor.person_id = p.person_id
+        WHERE mc_actor.role = 'Actor'
+          AND EXISTS (
+              SELECT 1
+              FROM movie_cast mc_director
+              WHERE mc_director.movie_id = m.movie_id
+                AND mc_director.person_id = p.person_id
+                AND mc_director.role = 'Director'
+          );
+      """)
     result = cursor.fetchall()
     for row in result:
         print(row)
