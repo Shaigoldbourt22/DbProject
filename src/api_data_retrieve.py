@@ -14,6 +14,13 @@ db_host = os.getenv("DB_HOST")
 db_name = os.getenv("DB_NAME")
 db_user = os.getenv("DB_USER")
 
+insert_movie = """INSERT INTO movies (movie_id, title, release_date, vote_average, overview, popularity)
+            VALUES (%s, %s, %s, %s, %s, %s)"""
+insert_genre = """INSERT INTO genres (genre_id, name) VALUES (%s, %s) ON DUPLICATE KEY UPDATE name=name"""
+insert_person = """INSERT INTO persons (person_id, name) VALUES (%s, %s) ON DUPLICATE KEY UPDATE name=name"""
+link_movie_genre = """INSERT INTO movie_genres (movie_id, genre_id) VALUES (%s, %s)"""
+link_movie_cast = """INSERT IGNORE INTO movie_cast (movie_id, person_id, role, character_name) VALUES (%s, %s, %s, %s)"""
+
 
 def fetch_movies(page):
     url = f"{TMDB_BASE_URL}/movie/popular?api_key={TMDB_API_KEY}&page={page}"
@@ -27,7 +34,7 @@ def fetch_genres():
     return response.json()
 
 
-def fetch_actors(movie_id):
+def fetch_credits(movie_id):
     url = f"{TMDB_BASE_URL}/movie/{movie_id}/credits?api_key={TMDB_API_KEY}"
     response = requests.get(url)
     return response.json()
@@ -73,28 +80,31 @@ def insert_data():
             overview = movie['overview']
             popularity = movie['popularity']
 
-            cursor.execute("""
-            INSERT INTO movies (movie_id, title, release_date, vote_average, overview, popularity)
-            VALUES (%s, %s, %s, %s, %s, %s)
-            """, (movie_id, title, release_date, vote_average, overview, popularity))
+            cursor.execute(insert_movie, (movie_id, title, release_date, vote_average, overview, popularity))
 
             for genre_id in movie['genre_ids']:
                 genre_name = genre_dict[genre_id]
-                cursor.execute("INSERT INTO genres (genre_id, name) VALUES (%s, %s) ON DUPLICATE KEY UPDATE name=name",
-                               (genre_id, genre_name))
-                cursor.execute("INSERT INTO movie_genres (movie_id, genre_id) VALUES (%s, %s)", (movie_id, genre_id))
+                cursor.execute(insert_genre, (genre_id, genre_name))
+                cursor.execute(link_movie_genre, (movie_id, genre_id))
 
-            actor_data = fetch_actors(movie_id)
-            for actor in actor_data['cast']:
-                person_id = actor['id']
-                name = actor['name']
-                character_name = actor.get('character', '')
-                cursor.execute(
-                    "INSERT INTO persons (person_id, name) VALUES (%s, %s) ON DUPLICATE KEY UPDATE name=name",
-                    (person_id, name))
-                cursor.execute(
-                    "INSERT IGNORE INTO movie_cast (movie_id, person_id, role, character_name) VALUES (%s, %s, %s, %s)",
-                    (movie_id, person_id, 'Actor', character_name))
+            movie_credits = fetch_credits(movie_id)
+            cast_list = movie_credits.get("cast", [])
+            crew_list = movie_credits.get("crew", [])
+
+            # Insert cast (actors)
+            for c in cast_list:
+                person_id = c["id"]
+                name = c["name"]
+                character_name = c.get("character", "")
+                cursor.execute(insert_person, (person_id, name))
+                cursor.execute(link_movie_cast, (movie_id, person_id, "Actor", character_name))
+
+            # Insert crew
+            for crew_member in crew_list:
+                person_id = crew_member["id"]
+                name = crew_member["name"]
+                cursor.execute(insert_person, (person_id, name))
+                cursor.execute(link_movie_cast, (movie_id, person_id, crew_member.get("job"), ""))
 
         # Sleep to avoid hitting the rate limit
         time.sleep(1)
