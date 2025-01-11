@@ -9,7 +9,7 @@ def query_1():
     )
     cursor = connection.cursor()
     title = input("Enter movie title to search: ")
-    cursor.execute("SELECT * FROM Movies WHERE title = %s", (title,))
+    cursor.execute("SELECT * FROM movies WHERE title = %s", (title,))
     result = cursor.fetchall()
     for row in result:
         print(row)
@@ -25,7 +25,7 @@ def query_2():
     )
     cursor = connection.cursor()
     name = input("Enter actor name to search: ")
-    cursor.execute("SELECT * FROM Actors WHERE name = %s", (name,))
+    cursor.execute("SELECT * FROM persons WHERE name = %s", (name,))
     result = cursor.fetchall()
     for row in result:
         print(row)
@@ -42,7 +42,13 @@ def query_3():
     cursor = connection.cursor()
     year = input("Enter release year: ")
     genre = input("Enter genre: ")
-    cursor.execute("SELECT * FROM Movies WHERE release_year > %s AND genre = %s", (year, genre))
+    cursor.execute("""
+    SELECT m.*
+    FROM movies m
+    JOIN movie_genres mg ON m.movie_id = mg.movie_id
+    JOIN genres g ON mg.genre_id = g.genre_id
+    WHERE YEAR(m.release_date) > %s AND g.name = %s
+    """, (year, genre))
     result = cursor.fetchall()
     for row in result:
         print(row)
@@ -57,7 +63,12 @@ def query_4():
         database="MovieDB"
     )
     cursor = connection.cursor()
-    cursor.execute("SELECT genre, COUNT(*) FROM Movies GROUP BY genre")
+    cursor.execute("""
+    SELECT g.name, COUNT(mg.movie_id) as movie_count
+    FROM genres g
+    JOIN movie_genres mg ON g.genre_id = mg.genre_id
+    GROUP BY g.name
+    """)
     result = cursor.fetchall()
     for row in result:
         print(row)
@@ -73,10 +84,10 @@ def query_5():
     )
     cursor = connection.cursor()
     cursor.execute("""
-    SELECT a.name, COUNT(ma.movie_id) as movie_count
-    FROM Actors a
-    JOIN MovieActors ma ON a.actor_id = ma.actor_id
-    GROUP BY a.name
+    SELECT p.name, COUNT(mc.movie_id) as movie_count
+    FROM persons p
+    JOIN movie_cast mc ON p.person_id = mc.person_id
+    GROUP BY p.name
     HAVING movie_count > 1
     """)
     result = cursor.fetchall()

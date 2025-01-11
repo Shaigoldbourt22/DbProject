@@ -21,28 +21,49 @@ def create_tables():
     cursor = connection.cursor()
     
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS Movies (
-        movie_id INT AUTO_INCREMENT PRIMARY KEY,
+    CREATE TABLE IF NOT EXISTS movies (
+        movie_id INT PRIMARY KEY,
         title VARCHAR(255) NOT NULL,
-        release_year VARCHAR(4),
-        genre VARCHAR(255)
+        release_date DATE,
+        vote_average FLOAT,
+        overview TEXT,
+        popularity FLOAT
     )
     """)
     
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS Actors (
-        actor_id INT AUTO_INCREMENT PRIMARY KEY,
+    CREATE TABLE IF NOT EXISTS persons (
+        person_id INT PRIMARY KEY,
         name VARCHAR(255) NOT NULL
     )
     """)
     
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS MovieActors (
+    CREATE TABLE IF NOT EXISTS genres (
+        genre_id INT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL
+    )
+    """)
+    
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS movie_genres (
         movie_id INT,
-        actor_id INT,
-        PRIMARY KEY (movie_id, actor_id),
-        FOREIGN KEY (movie_id) REFERENCES Movies(movie_id),
-        FOREIGN KEY (actor_id) REFERENCES Actors(actor_id)
+        genre_id INT,
+        PRIMARY KEY (movie_id, genre_id),
+        FOREIGN KEY (movie_id) REFERENCES movies(movie_id),
+        FOREIGN KEY (genre_id) REFERENCES genres(genre_id)
+    )
+    """)
+    
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS movie_cast (
+        movie_id INT,
+        person_id INT,
+        role VARCHAR(255),
+        character_name VARCHAR(255),
+        PRIMARY KEY (movie_id, person_id),
+        FOREIGN KEY (movie_id) REFERENCES movies(movie_id),
+        FOREIGN KEY (person_id) REFERENCES persons(person_id)
     )
     """)
     
