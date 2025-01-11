@@ -1,0 +1,74 @@
+# Python compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdc
+*.pyc
+
+# Virtual environment
+venv/
+.env/
+.venv/
+env/
+ENV/
+*.env
+
+# Packages and package management
+pip-log.txt
+pip-delete-this-directory.txt
+*.lock
+
+# Testing and coverage
+.coverage
+.tox/
+nosetests.xml
+pytest_cache/
+junit.xml
+
+# IDE and Editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+*.out
+*.pid
+*.seed
+*.csv
+*.dat
+*.db
+*.sqlite3
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# MyPy and Type Checking
+.mypy_cache/
+
+# Bandit Security Tool
+.bandit/
+
+# Sphinx documentation
+docs/_build/
+
+# Docker and Deployment
+docker-compose.override.yml
+.dockerignore
+
+# Secrets and Credentials
+.env
+*.env
+.env.*
+secrets.*
+*.pem
+*.key
+
+# OS Files
+.DS_Store
+Thumbs.db
