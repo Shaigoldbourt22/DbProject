@@ -18,7 +18,7 @@ def main():
     query_4()
     print("\n")
 
-    print("Executing Query 5: Find Actors Who Have Acted in More Than One Movie")
+    print("Executing Query 5: Find top 5 directors by average vote_average of the movies they directed")
     query_5()
     print("\n")
 

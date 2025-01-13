@@ -69,6 +69,7 @@ def insert_data():
 
     genres = fetch_genres()
     genre_dict = {genre['id']: genre['name'] for genre in genres['genres']}
+    movie_ids_visited = {}
 
     for page in range(1, 3):  # Fetching 5000 movies (20 movies per page)
         movie_data = fetch_movies(page)
@@ -79,6 +80,9 @@ def insert_data():
             vote_average = movie['vote_average']
             overview = movie['overview']
             popularity = movie['popularity']
+
+            if movie_id in movie_ids_visited or not release_date:
+                continue
 
             cursor.execute(insert_movie, (movie_id, title, release_date, vote_average, overview, popularity))
 
@@ -105,6 +109,8 @@ def insert_data():
                 name = crew_member["name"]
                 cursor.execute(insert_person, (person_id, name))
                 cursor.execute(link_movie_cast, (movie_id, person_id, crew_member.get("job"), ""))
+
+            movie_ids_visited[movie_id] = movie_id
 
         # Sleep to avoid hitting the rate limit
         time.sleep(1)
