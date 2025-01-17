@@ -89,6 +89,7 @@ def query_4():
     connection.close()
 
 
+# Query 5: Find top 5 directors by average vote_average of the movies they directed.
 def query_5():
     connection = mysql.connector.connect(
         host=db_host,
@@ -99,20 +100,18 @@ def query_5():
     cursor = connection.cursor()
     cursor.execute("""
         SELECT 
-            m.title,
-            p.name
-        FROM movies m
-        JOIN movie_cast mc_actor ON (m.movie_id = mc_actor.movie_id)
-        JOIN persons p ON mc_actor.person_id = p.person_id
-        WHERE mc_actor.role = 'Actor'
-          AND EXISTS (
-              SELECT 1
-              FROM movie_cast mc_director
-              WHERE mc_director.movie_id = m.movie_id
-                AND mc_director.person_id = p.person_id
-                AND mc_director.role = 'Director'
-          );
-      """)
+            p.name AS director_name,
+            AVG(m.vote_average) AS avg_rating,
+            COUNT(*) as num_movies
+        FROM movie_cast mc
+        JOIN persons p ON mc.person_id = p.person_id
+        JOIN movies m ON mc.movie_id = m.movie_id
+        WHERE mc.role = 'Director'
+        GROUP BY p.person_id
+        HAVING COUNT(*) >= 1
+        ORDER BY avg_rating DESC
+        LIMIT 5;
+    """)
     result = cursor.fetchall()
     for row in result:
         print(row)
