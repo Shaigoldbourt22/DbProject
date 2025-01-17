@@ -74,7 +74,7 @@ The database consists of the following tables:
 2. **Query 2**: 
 3. **Query 3**: 
 4. **Query 4**: 
-5. **Query 5**: 
+5. **Query 5**: Find top 5 directors by average vote_average of the movies they directed
 
 ## Setup and Usage
 
