@@ -110,22 +110,6 @@ The scripts include robust error handling to manage API failures, database conne
 ## License
 This project is developed for educational purposes and follows the academic guidelines set by the institution.
 
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. Please make sure to update tests as appropriate.
-
-### _notise the "mission.txt" file in "public" directory to see futre features which planned to be added!_.
-
-### How To Contribute
-
-1. Fork the repository to your own Github account.
-2. Clone the project to your machine.
-3. Create a branch locally with a succinct but descriptive name.
-4. Commit changes to the branch.
-5. Following any formatting and testing guidelines specific to this repo.
-6. Push changes to your fork.
-7. Open a Pull Request in my repository.
-
 ---
 
 ## Creators / Maintainers
