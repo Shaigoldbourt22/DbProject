@@ -26,7 +26,7 @@ def query_1():
     connection.close()
 
 def query_2():
-    # Find the top 5 most popular movies along with their genres and the number of actors in each movie
+    # Find the top 5 most popular movies mentioning 'Action' in their overview, along with their genres and the number of actors in each movie
     connection = mysql.connector.connect(
         host="localhost",
         user="your_username",
@@ -40,7 +40,7 @@ def query_2():
     JOIN movie_genres mg ON m.movie_id = mg.movie_id
     JOIN genres g ON mg.genre_id = g.genre_id
     JOIN movie_cast mc ON m.movie_id = mc.movie_id
-    WHERE mc.role = 'Actor'
+    WHERE MATCH(m.overview) AGAINST('Action' IN NATURAL LANGUAGE MODE) AND mc.role = 'Actor'
     GROUP BY m.movie_id
     ORDER BY m.popularity DESC
     LIMIT 5
