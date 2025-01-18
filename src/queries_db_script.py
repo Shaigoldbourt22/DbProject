@@ -18,8 +18,16 @@ def query_1():
         database=db_name
     )
     cursor = connection.cursor()
-    title = input("Enter movie title to search: ")
-    cursor.execute("SELECT * FROM movies WHERE title = %s", (title,))
+    cursor.execute("""
+    SELECT p.name AS actor, AVG(m.vote_average) AS avg_rating
+    FROM persons p
+    JOIN movie_cast mc ON p.person_id = mc.person_id
+    JOIN movies m ON mc.movie_id = m.movie_id
+    WHERE mc.role = 'Actor'
+    GROUP BY p.name
+    ORDER BY avg_rating DESC
+    LIMIT 5
+    """)
     result = cursor.fetchall()
     for row in result:
         print(row)
@@ -35,8 +43,15 @@ def query_2():
         database=db_name
     )
     cursor = connection.cursor()
-    name = input("Enter actor name to search: ")
-    cursor.execute("SELECT * FROM persons WHERE name = %s", (name,))
+    cursor.execute("""
+    SELECT g.name AS genre, AVG(m.vote_average) AS avg_rating
+    FROM genres g
+    JOIN movie_genres mg ON g.genre_id = mg.genre_id
+    JOIN movies m ON mg.movie_id = m.movie_id
+    GROUP BY g.name
+    ORDER BY avg_rating DESC
+    LIMIT 5
+    """)
     result = cursor.fetchall()
     for row in result:
         print(row)
@@ -52,15 +67,17 @@ def query_3():
         database=db_name
     )
     cursor = connection.cursor()
-    year = input("Enter release year: ")
-    genre = input("Enter genre: ")
     cursor.execute("""
-    SELECT m.*
+    SELECT m.title, COUNT(DISTINCT g.genre_id) AS genre_count
     FROM movies m
+    JOIN movie_cast mc ON m.movie_id = mc.movie_id
     JOIN movie_genres mg ON m.movie_id = mg.movie_id
     JOIN genres g ON mg.genre_id = g.genre_id
-    WHERE YEAR(m.release_date) > %s AND g.name = %s
-    """, (year, genre))
+    WHERE mc.role = 'Actor'
+    GROUP BY m.title
+    ORDER BY genre_count DESC
+    LIMIT 5
+    """)
     result = cursor.fetchall()
     for row in result:
         print(row)
