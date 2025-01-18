@@ -67,6 +67,12 @@ def create_tables():
     )
     """)
     
+    # Create full-text index on the overview column
+    cursor.execute("CREATE FULLTEXT INDEX idx_overview ON movies(overview)")
+    
+    # Create index on the popularity column
+    cursor.execute("CREATE INDEX idx_popularity ON movies(popularity)")
+    
     connection.commit()
     cursor.close()
     connection.close()

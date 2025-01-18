@@ -1,11 +1,11 @@
 from queries_db_script import query_1, query_2, query_3, query_4, query_5
 
 def main():
-    print("Executing Complex Query 1: Find the Top 5 Actors with the Highest Average Movie Rating")
+    print("Executing Complex Query 1: Find the Top 5 Movies Mentioning 'Leonardo DiCaprio' in Their Overview with the Highest Average Rating, Including Genres")
     query_1()
     print("\n")
 
-    print("Executing Complex Query 2: Find the Top 5 Genres with the Highest Average Movie Rating")
+    print("Executing Complex Query 2: Find the Top 5 Most Popular Movies Along with Their Genres and the Number of Actors in Each Movie")
     query_2()
     print("\n")
 
