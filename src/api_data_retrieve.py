@@ -71,7 +71,7 @@ def insert_data():
     genre_dict = {genre['id']: genre['name'] for genre in genres['genres']}
     movie_ids_visited = {}
 
-    for page in range(1, 3):  # Fetching 5000 movies (20 movies per page)
+    for page in range(1, 250):  # Fetching 5000 movies (20 movies per page)
         movie_data = fetch_movies(page)
         for movie in movie_data['results']:
             movie_id = movie['id']

@@ -84,8 +84,8 @@ The database consists of the following tables:
 
 1. **Query 1**: Find the top 5 movies mentioning 'Leonardo DiCaprio' in their overview with the highest average rating, including genres
 2. **Query 2**: Find the top 5 most popular movies mentioning 'Action' in their overview, along with their genres and the number of actors in each movie
-3. **Query 3**: # Find movies with the most diverse cast (actors from different genres)
-4. **Query 4**:
+3. **Query 3**: Find movies with the most diverse cast (actors from different genres)
+4. **Query 4**: Find the highest-rated movie in each genre, along with its rating, genre name, and popularity.
 5. **Query 5**: Find top 5 directors by average vote_average of the movies they directed
 
 ## Setup and Usage
