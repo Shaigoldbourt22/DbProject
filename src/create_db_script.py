@@ -80,6 +80,12 @@ def create_tables():
         FOREIGN KEY (person_id) REFERENCES persons(person_id)
     )
     """)
+    
+    # Create full-text index on the overview column
+    cursor.execute("CREATE FULLTEXT INDEX idx_overview ON movies(overview)")
+
+    # Create index on the popularity column
+    cursor.execute("CREATE INDEX idx_popularity ON movies(popularity)")
 
     connection.commit()
     cursor.close()
