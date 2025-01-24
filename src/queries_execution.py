@@ -14,7 +14,7 @@ def main():
     query_3()
     print("\n")
 
-    print("Executing Query 4: Count the Number of Movies per Genre")
+    print("Executing Query 4: Find the highest-rated movie in each genre, along with its rating, genre name, and popularity.")
     query_4()
     print("\n")
 

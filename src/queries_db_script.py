@@ -9,7 +9,8 @@ db_host = os.getenv("DB_HOST")
 db_name = os.getenv("DB_NAME")
 db_user = os.getenv("DB_USER")
 
-# Find the top 5 movies mentioning 'Leonardo DiCaprio' in their overview with the highest average rating, including genres
+
+# Query 1: Find the top 5 movies mentioning 'Leonardo DiCaprio' in their overview with the highest average rating, including genres
 def query_1():
     connection = mysql.connector.connect(
         host=db_host,
@@ -34,7 +35,8 @@ def query_1():
     cursor.close()
     connection.close()
 
-# Find the top 5 most popular movies mentioning 'Action' in their overview, along with their genres and the number of actors in each movie
+
+# Query 2: Find the top 5 most popular movies mentioning 'Action' in their overview, along with their genres and the number of actors in each movie
 def query_2():
     connection = mysql.connector.connect(
         host=db_host,
@@ -60,7 +62,8 @@ def query_2():
     cursor.close()
     connection.close()
 
-# Find movies with the most diverse cast (actors from different genres)
+
+# Query 3: Find movies with the most diverse cast (actors from different genres)
 def query_3():
     connection = mysql.connector.connect(
         host=db_host,
@@ -87,6 +90,7 @@ def query_3():
     connection.close()
 
 
+# Query 4: Find the highest-rated movie in each genre, along with its rating, genre name, and popularity.
 def query_4():
     connection = mysql.connector.connect(
         host=db_host,
@@ -96,10 +100,21 @@ def query_4():
     )
     cursor = connection.cursor()
     cursor.execute("""
-    SELECT g.name, COUNT(mg.movie_id) as movie_count
-    FROM genres g
-    JOIN movie_genres mg ON g.genre_id = mg.genre_id
-    GROUP BY g.name
+        SELECT 
+            g.name AS genre_name,
+            m.title AS top_movie,
+            m.vote_average AS rating,
+            m.popularity
+        FROM genres g
+        JOIN movie_genres mg ON g.genre_id = mg.genre_id
+        JOIN movies m ON mg.movie_id = m.movie_id
+        WHERE m.vote_average = (
+            SELECT MAX(m2.vote_average)
+            FROM movie_genres mg2
+            JOIN movies m2 ON mg2.movie_id = m2.movie_id
+            WHERE mg2.genre_id = g.genre_id
+        );
+        ORDER BY g.name;
     """)
     result = cursor.fetchall()
     for row in result:
