@@ -1,5 +1,12 @@
 from utils import create_database_connection
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+db_name=os.getenv('DB_NAME')
+
 
 def create_database():
     connection = create_database_connection()
