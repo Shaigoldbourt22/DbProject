@@ -1,24 +1,8 @@
-from dotenv import load_dotenv
-import mysql.connector
-import os
-
-load_dotenv()
-
-db_password = os.getenv("DB_PASSWORD")
-db_host = os.getenv("DB_HOST")
-db_name = os.getenv("DB_NAME")
-db_user = os.getenv("DB_USER")
-db_port = os.getenv("DB_PORT")
+from utils import create_database_connection
 
 
 def create_database():
-    connection = mysql.connector.connect(
-        host=db_host,
-        user=db_user,
-        password=db_password,
-        port=db_port,
-        database=db_name
-    )
+    connection = create_database_connection()
     cursor = connection.cursor()
     cursor.execute("CREATE DATABASE IF NOT EXISTS MovieDB")
     cursor.close()
@@ -26,12 +10,7 @@ def create_database():
 
 
 def create_tables():
-    connection = mysql.connector.connect(
-        host=db_host,
-        user=db_user,
-        password=db_password,
-        database=db_name
-    )
+    connection = create_database_connection()
     cursor = connection.cursor()
 
     cursor.execute("""
