@@ -1,23 +1,9 @@
-from dotenv import load_dotenv
-import mysql.connector
-import os
-
-load_dotenv()
-
-db_password = os.getenv("DB_PASSWORD")
-db_host = os.getenv("DB_HOST")
-db_name = os.getenv("DB_NAME")
-db_user = os.getenv("DB_USER")
+from utils import create_database_connection
 
 
 # Query 1: Find the top 5 movies mentioning 'Leonardo DiCaprio' in their overview with the highest average rating, including genres
 def query_1():
-    connection = mysql.connector.connect(
-        host=db_host,
-        user=db_user,
-        password=db_password,
-        database=db_name
-    )
+    connection = create_database_connection()
     cursor = connection.cursor()
     cursor.execute("""
     SELECT m.title, m.overview, m.release_date, m.vote_average, GROUP_CONCAT(DISTINCT g.name) AS genres
@@ -38,12 +24,7 @@ def query_1():
 
 # Query 2: Find the top 5 most popular movies mentioning 'Action' in their overview, along with their genres and the number of actors in each movie
 def query_2():
-    connection = mysql.connector.connect(
-        host=db_host,
-        user=db_user,
-        password=db_password,
-        database=db_name
-    )
+    connection = create_database_connection()
     cursor = connection.cursor()
     cursor.execute("""
     SELECT m.title, m.overview, m.release_date, m.popularity, GROUP_CONCAT(DISTINCT g.name) AS genres, COUNT(DISTINCT mc.person_id) AS actor_count
@@ -65,12 +46,7 @@ def query_2():
 
 # Query 3: Find movies with the most diverse cast (actors from different genres)
 def query_3():
-    connection = mysql.connector.connect(
-        host=db_host,
-        user=db_user,
-        password=db_password,
-        database=db_name
-    )
+    connection = create_database_connection()
     cursor = connection.cursor()
     cursor.execute("""
     SELECT m.title, COUNT(DISTINCT g.genre_id) AS genre_count
@@ -92,12 +68,7 @@ def query_3():
 
 # Query 4: Find the highest-rated movie in each genre, along with its rating, genre name, and popularity.
 def query_4():
-    connection = mysql.connector.connect(
-        host=db_host,
-        user=db_user,
-        password=db_password,
-        database=db_name
-    )
+    connection = create_database_connection()
     cursor = connection.cursor()
     cursor.execute("""
         SELECT 
@@ -125,12 +96,7 @@ def query_4():
 
 # Query 5: Find top 5 directors by average vote_average of the movies they directed.
 def query_5():
-    connection = mysql.connector.connect(
-        host=db_host,
-        user=db_user,
-        password=db_password,
-        database=db_name
-    )
+    connection = create_database_connection()
     cursor = connection.cursor()
     cursor.execute("""
         SELECT 

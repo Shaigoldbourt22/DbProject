@@ -1,18 +1,15 @@
 from dotenv import load_dotenv
 import os
 import requests
-import mysql.connector
 import time
+
+from utils import create_database_connection
 
 load_dotenv()
 
 TMDB_API_KEY = os.getenv('TMDB_API_KEY')
 TMDB_BASE_URL = os.getenv('TMDB_BASE_URL')
 
-db_password = os.getenv("DB_PASSWORD")
-db_host = os.getenv("DB_HOST")
-db_name = os.getenv("DB_NAME")
-db_user = os.getenv("DB_USER")
 
 insert_movie = """INSERT INTO movies (movie_id, title, release_date, vote_average, overview, popularity)
             VALUES (%s, %s, %s, %s, %s, %s)"""
@@ -41,13 +38,9 @@ def fetch_credits(movie_id):
 
 
 def clean_database():
-    connection = mysql.connector.connect(
-        host=db_host,
-        user=db_user,
-        password=db_password,
-        database=db_name
-    )
+    connection = create_database_connection()
     cursor = connection.cursor()
+
     cursor.execute("DELETE FROM movie_cast")
     cursor.execute("DELETE FROM movie_genres")
     cursor.execute("DELETE FROM genres")
@@ -59,12 +52,7 @@ def clean_database():
 
 
 def insert_data():
-    connection = mysql.connector.connect(
-        host=db_host,
-        user=db_user,
-        password=db_password,
-        database=db_name
-    )
+    connection = create_database_connection()
     cursor = connection.cursor()
 
     genres = fetch_genres()
