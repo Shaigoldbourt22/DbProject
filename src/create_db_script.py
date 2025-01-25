@@ -11,7 +11,7 @@ db_name=os.getenv('DB_NAME')
 def create_database():
     connection = create_database_connection()
     cursor = connection.cursor()
-    cursor.execute("CREATE DATABASE IF NOT EXISTS MovieDB")
+    cursor.execute(f"""CREATE DATABASE IF NOT EXISTS {db_name}""")
     cursor.close()
     connection.close()
 
