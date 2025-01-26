@@ -1,7 +1,7 @@
 from utils import create_database_connection
 
 
-# Query 1: Find the top 5 movies mentioning 'Leonardo DiCaprio' in their overview with the highest average rating, including genres
+# Query 1: Find the top 5 movies mentioning 'gangster' in their overview with the highest average rating, including genres
 def query_1():
     connection = create_database_connection()
     cursor = connection.cursor()
@@ -10,7 +10,7 @@ def query_1():
     FROM movies m
     LEFT JOIN movie_genres mg ON m.movie_id = mg.movie_id
     LEFT JOIN genres g ON mg.genre_id = g.genre_id
-    WHERE MATCH(m.overview) AGAINST('Leonardo DiCaprio' IN NATURAL LANGUAGE MODE)
+    WHERE MATCH(m.overview) AGAINST('gangster' IN NATURAL LANGUAGE MODE)
     GROUP BY m.movie_id
     ORDER BY m.vote_average DESC
     LIMIT 5

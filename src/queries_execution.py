@@ -2,7 +2,7 @@ from queries_db_script import query_1, query_2, query_3, query_4, query_5
 
 
 def main():
-    print("Executing Query 1: Find the Top 5 Movies Mentioning 'Leonardo DiCaprio' in Their Overview with the Highest Average Rating, Including Genres")    
+    print("Executing Query 1: Find the Top 5 Movies Mentioning 'gangster' in Their Overview with the Highest Average Rating, Including Genres")    
     query_1()
     print("\n")
 
