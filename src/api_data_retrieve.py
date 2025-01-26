@@ -1,9 +1,8 @@
 from dotenv import load_dotenv
+from utils import create_database_connection
 import os
 import requests
 import time
-
-from utils import create_database_connection
 
 load_dotenv()
 
@@ -40,7 +39,6 @@ def fetch_credits(movie_id):
 def clean_database():
     connection = create_database_connection()
     cursor = connection.cursor()
-
     cursor.execute("DELETE FROM movie_cast")
     cursor.execute("DELETE FROM movie_genres")
     cursor.execute("DELETE FROM genres")
@@ -57,7 +55,14 @@ def insert_data():
 
     genres = fetch_genres()
     genre_dict = {genre['id']: genre['name'] for genre in genres['genres']}
-    movie_ids_visited = {}
+    movie_ids_visited = set()
+
+    # Batches for bulk inserts
+    movies_batch = []
+    genres_batch = []
+    movie_genres_batch = []
+    persons_batch = []
+    movie_cast_batch = []
 
     for page in range(1, 250):  # Fetching 5000 movies (20 movies per page)
         movie_data = fetch_movies(page)
@@ -72,36 +77,60 @@ def insert_data():
             if movie_id in movie_ids_visited or not release_date:
                 continue
 
-            cursor.execute(insert_movie, (movie_id, title, release_date, vote_average, overview, popularity))
+            # Add movie to the batch
+            movies_batch.append((movie_id, title, release_date, vote_average, overview, popularity))
 
+            # Add genres to the batch
             for genre_id in movie['genre_ids']:
-                genre_name = genre_dict[genre_id]
-                cursor.execute(insert_genre, (genre_id, genre_name))
-                cursor.execute(link_movie_genre, (movie_id, genre_id))
+                genres_batch.append((genre_id, genre_dict[genre_id]))
+                movie_genres_batch.append((movie_id, genre_id))
 
+            # Fetch credits
             movie_credits = fetch_credits(movie_id)
             cast_list = movie_credits.get("cast", [])
             crew_list = movie_credits.get("crew", [])
 
-            # Insert cast (actors)
+            # Add cast (actors) to the batch
             for c in cast_list:
                 person_id = c["id"]
                 name = c["name"]
                 character_name = c.get("character", "")
-                cursor.execute(insert_person, (person_id, name))
-                cursor.execute(link_movie_cast, (movie_id, person_id, "Actor", character_name))
+                persons_batch.append((person_id, name))
+                movie_cast_batch.append((movie_id, person_id, "Actor", character_name))
 
-            # Insert crew
+            # Add crew to the batch
             for crew_member in crew_list:
-                person_id = crew_member["id"]
-                name = crew_member["name"]
-                cursor.execute(insert_person, (person_id, name))
-                cursor.execute(link_movie_cast, (movie_id, person_id, crew_member.get("job"), ""))
+                if (crew_member.get("job") == "Director"):
+                    person_id = crew_member["id"]
+                    name = crew_member["name"]
+                    role = crew_member.get("job", "")
+                    persons_batch.append((person_id, name))
+                    movie_cast_batch.append((movie_id, person_id, role, ""))
 
-            movie_ids_visited[movie_id] = movie_id
+            movie_ids_visited.add(movie_id)
 
-        # Sleep to avoid hitting the rate limit
-        time.sleep(1)
+        # Insert batches into the database
+        if movies_batch:
+            cursor.executemany(insert_movie, movies_batch)
+            movies_batch = []
+
+        if genres_batch:
+            cursor.executemany(insert_genre, genres_batch)
+            genres_batch = []
+
+        if movie_genres_batch:
+            cursor.executemany(link_movie_genre, movie_genres_batch)
+            movie_genres_batch = []
+
+        if persons_batch:
+            cursor.executemany(insert_person, persons_batch)
+            persons_batch = []
+
+        if movie_cast_batch:
+            cursor.executemany(link_movie_cast, movie_cast_batch)
+            movie_cast_batch = []
+
+        connection.commit()
         print(f"Inserted movies from page {page}")
 
     connection.commit()

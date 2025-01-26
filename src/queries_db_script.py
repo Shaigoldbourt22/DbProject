@@ -80,12 +80,12 @@ def query_4():
         JOIN movie_genres mg ON g.genre_id = mg.genre_id
         JOIN movies m ON mg.movie_id = m.movie_id
         WHERE m.vote_average = (
-            SELECT MAX(m2.vote_average)
-            FROM movie_genres mg2
-            JOIN movies m2 ON mg2.movie_id = m2.movie_id
-            WHERE mg2.genre_id = g.genre_id
-        );
-        ORDER BY g.name;
+                SELECT MAX(m2.vote_average)
+                FROM movie_genres mg2
+                JOIN movies m2 ON mg2.movie_id = m2.movie_id
+                WHERE mg2.genre_id = g.genre_id
+            )
+        ORDER BY g.name
     """)
     result = cursor.fetchall()
     for row in result:
