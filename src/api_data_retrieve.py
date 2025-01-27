@@ -64,7 +64,7 @@ def insert_data():
     persons_batch = []
     movie_cast_batch = []
 
-    for page in range(1, 275):  # Fetching at least 5000 movies (20 movies per page)
+    for page in range(1, 100): 
         movie_data = fetch_movies(page)
         for movie in movie_data['results']:
             movie_id = movie['id']

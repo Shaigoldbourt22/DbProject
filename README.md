@@ -88,23 +88,21 @@ The database consists of the following tables:
 4. **Query 4**: Find the highest-rated movie in each genre, along with its rating, genre name, and popularity.
 5. **Query 5**: Find top 5 directors by average vote_average of the movies they directed
 
-## Index Strategy
+# Index Strategy
 
 This project uses a set of carefully selected indexes to optimize query performance. Below is a summary of the indexes added to each table, their purpose, and justification:
 
-| Table              | Index Name             | Columns                    | Purpose                                                                                              | Justification                                                                                       |
-| ------------------ | ---------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| **`movies`**       | `idx_overview`         | `overview`                 | Full-text search for queries like `MATCH ... AGAINST` on movie descriptions.                         | Improves performance for text searches involving keywords (e.g., "gangster").                       |
-|                    | `idx_popularity`       | `popularity`               | Filtering and sorting movies by popularity.                                                          | Optimizes queries that rank movies by popularity, often used in user-facing applications.           |
-|                    | `idx_movie_vote`       | `movie_id`, `vote_average` | Efficient grouping and sorting by vote average for queries involving ratings.                        | Supports queries like finding the top-rated movies or aggregating results by movie ID.              |
-|                    | `idx_movie_popularity` | `movie_id`, `popularity`   | Optimizes sorting by popularity in queries.                                                          | Reduces overhead for queries ranking movies by both popularity and other attributes.                |
-| **`movie_genres`** | `idx_movie_genre`      | `movie_id`, `genre_id`     | Efficient joins between movies and genres.                                                           | Essential for queries combining movie and genre information (e.g., highest-rated movies per genre). |
-|                    | `idx_genre_vote`       | `genre_id`                 | Optimizes filtering and sorting by genres in queries like finding the highest-rated movie per genre. | Speeds up queries that involve aggregating or filtering by genre.                                   |
-| **`movie_cast`**   | `idx_cast_movie`       | `movie_id`, `person_id`    | Optimizes joins with `persons` and grouping for queries about actors and directors.                  | Critical for queries fetching details about cast members or filtering by cast roles.                |
-|                    | `idx_cast_role`        | `person_id`, `role`        | Efficient filtering for queries involving roles (e.g., actors or directors).                         | Improves performance of role-specific queries like finding directors or actors for a movie.         |
-|                    | `idx_role`             | `role`                     | Further optimizes filtering by role in actor/director-specific queries.                              | Useful for high-cardinality filtering on the `role` column.                                         |
-| **`genres`**       | `idx_genre_id`         | `genre_id`                 | Efficient joins with `movie_genres` for genre-specific queries.                                      | Ensures fast joins between genres and movie genres for filtering or aggregating by genre.           |
-| **`persons`**      | `idx_person_id`        | `person_id`                | Optimizes joins with `movie_cast` for queries involving directors and cast members.                  | Supports fast lookups of directors or actors and their associated movies.                           |
+| Table              | Index Name                        | Columns                    | Purpose                                                                                              | Justification                                                                                       |
+| ------------------ | --------------------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| **`movies`**       | `idx_overview`                   | `overview`                 | Full-text search for queries like `MATCH ... AGAINST` on movie descriptions.                         | Improves performance for text searches involving keywords (e.g., "gangster").                       |
+|                    | `idx_popularity`                 | `popularity`               | Filtering and sorting movies by popularity.                                                          | Optimizes queries that rank movies by popularity, often used in user-facing applications.           |
+|                    | `idx_vote_average`               | `vote_average`             | Filtering and sorting movies by average vote.                                                        | Improves performance for queries ranking movies by ratings.                                         |
+|                    | `idx_movies_vote_movie`          | `vote_average`, `movie_id` | Efficient sorting and grouping for queries involving ratings and movie ID.                           | Supports queries like finding the top-rated movies or aggregating results by movie ID.              |
+| **`movie_genres`** | `idx_movie_genres_genre_movie`   | `genre_id`, `movie_id`     | Efficient joins between movies and genres.                                                           | Essential for queries combining movie and genre information (e.g., highest-rated movies per genre). |
+| **`movie_cast`**   | `idx_cast_movie`                 | `movie_id`, `person_id`    | Optimizes joins with `persons` and grouping for queries about actors and directors.                  | Critical for queries fetching details about cast members or filtering by cast roles.                |
+|                    | `idx_cast_role`                  | `person_id`, `role`        | Efficient filtering for queries involving roles (e.g., actors or directors).                         | Improves performance of role-specific queries like finding directors or actors for a movie.         |
+| **`genres`**       | `idx_genre_id`                   | `genre_id`                 | Efficient joins with `movie_genres` for genre-specific queries.                                      | Ensures fast joins between genres and movie genres for filtering or aggregating by genre.           |
+| **`persons`**      | `idx_person_id`                  | `person_id`                | Optimizes joins with `movie_cast` for queries involving directors and cast members.                  | Supports fast lookups of directors or actors and their associated movies.                           |
 
 ### Key Points
 
@@ -115,8 +113,7 @@ This project uses a set of carefully selected indexes to optimize query performa
 ### Notes
 
 - The `idx_overview` index is a full-text index and is crucial for queries that involve searching for specific text in the movie descriptions.
-- Composite indexes (e.g., `idx_movie_vote` and `idx_cast_role`) are used for optimizing queries that involve multiple columns for filtering, grouping, or sorting.
-- Avoid over-indexing to ensure a balance between read and write performance.
+- Composite indexes (e.g., `idx_movie_genres_genre_movie` and `idx_movies_vote_movie`) are used for optimizing queries that involve multiple columns for filtering, grouping, or sorting.
 
 For any new queries, revisit this table to evaluate if additional indexes are needed.
 
