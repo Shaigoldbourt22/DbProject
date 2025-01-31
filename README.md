@@ -10,7 +10,7 @@
 
 ## Overview
 
-This project involves the creation of a movie-centered database management system (DBMS) using MySQL and Python. The system fetches data from The Movie Database (TMDB) API and stores it in a well-structured MySQL database. Additionally, the project includes five distinct database queries to analyze the stored data, focusing on specific aspects of the movie industry. While the project emphasizes backend development, a frontend design is documented to illustrate the intended application interface.
+This project involves the creation of a movie-centered database management system (DBMS) using MySQL and Python. The system fetches data from The Movie Database (TMDB) API and stores it in a well-structured MySQL database. Additionally, the project includes five distinct database queries to analyze the stored data, focusing on specific aspects of the movie industry.
 
 ## Features
 
@@ -44,11 +44,11 @@ project-root/
 │   ├── create_db_script.py       # Script to create the database schema
 │   ├── api_data_retrieve.py      # Script to fetch and insert data from TMDB API
 │   ├── queries_db_script.py      # Contains the SQL query functions
-│   └── queries_execution.py      # Demonstrates query executions
+│   └── queries_execution.py      # Query executions
 │
 ├── documentation/
 │   ├── user_manual.pdf           # Application functionality and design
-│   ├── system_docs.pdf           # Database schema and design rationale
+│   ├── system_docs.pdf           # Database schema and design 
 │   └── mysql_and_user_password.txt # MySQL credentials
 │
 ├── requirements.txt              # Required Python packages
@@ -108,14 +108,11 @@ This project uses a set of carefully selected indexes to optimize query performa
 
 - **Read Optimization:** These indexes are designed to enhance the performance of read-heavy operations such as `SELECT`, `JOIN`, `WHERE`, and `GROUP BY`.
 - **Write Performance Impact:** While indexes slightly slow down write operations (`INSERT`, `UPDATE`, `DELETE`), the tradeoff is acceptable given the read-heavy nature of the workload.
-- **Regular Monitoring:** Query performance should be monitored over time using tools like `EXPLAIN` and `information_schema.statistics` to ensure the indexes remain effective as the database grows.
 
 ### Notes
 
 - The `idx_overview` index is a full-text index and is crucial for queries that involve searching for specific text in the movie descriptions.
 - Composite indexes (e.g., `idx_movie_genres_genre_movie` and `idx_movies_vote_movie`) are used for optimizing queries that involve multiple columns for filtering, grouping, or sorting.
-
-For any new queries, revisit this table to evaluate if additional indexes are needed.
 
 ## Setup and Usage
 
@@ -143,7 +140,7 @@ python src/api_data_retrieve.py
 
 ### 4. Execute Queries
 
-Run example queries to interact with the database:
+Run queries to interact with the database:
 
 ```bash
 python src/queries_execution.py
@@ -177,7 +174,5 @@ If you have any questions or feedback, I would be glad if you will contact us vi
 </p>
 
 This project was created for educational purposes, for personal and open-source use.
-
-If you like my content or find my code useful, give it a :star:
 
 ---
